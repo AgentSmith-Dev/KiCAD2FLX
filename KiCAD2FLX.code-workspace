@@ -1,0 +1,17 @@
+{
+  "folders": [
+    {
+      "path": ".", "name": "Prj_KiCAD2FLX"
+    }
+  ],
+  "settings": {
+    "cmake.sourceDirectory": "${workspaceFolder:Prj_KiCAD2FLX}",
+//    "cmake.buildDirectory": "${workspaceFolder:ags_project}/build/${cmake.buildType}",
+    "cmake.generator": "Ninja",
+    "cmake.configureOnOpen": true
+  },
+  "launch": {
+    "version": "0.2.0",
+    "configurations": []
+  }
+}

@@ -1,0 +1,74 @@
+FROM ubuntu:24.04
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        build-essential \
+        ninja-build \
+        pkg-config \
+        git \
+        ca-certificates \
+        gdb \
+        curl \
+        cmake \
+        gcc \
+        libssl-dev \
+    &&  rm -rf /var/lib/apt/lists/*
+
+# optional: non-root user (praktischer bei bind-mounts)
+#ARG UID=1000
+#ARG GID=1000
+#RUN groupadd -g ${GID} dev && useradd -m -u ${UID} -g ${GID} dev
+#USER dev
+
+WORKDIR /work/
+
+#RUN mkdir /work/Software/ThirdParty/     
+
+#   -----------------------------------------------------------------------
+#   Install Paho MQTT lib
+
+# ags, 01/09/2025 calling git config --global http.sslverify false is a quick hack
+#                   since it overrides a propert SSL certificate checking.
+#                   see https://stackoverflow.com/questions/35821245/github-server-certificate-verification-failed/35824116#35824116
+#                   and https://stackoverflow.com/questions/21181231/server-certificate-verification-failed-cafile-etc-ssl-certs-ca-certificates-c
+
+#RUN git config --global http.sslverify false && \
+#    git clone https://github.com/eclipse/paho.mqtt.cpp.git /work/Software/ThirdParty/paho.mqtt.cpp && \ 
+#    cd /work/Software/ThirdParty/paho.mqtt.cpp    &&  \
+#    git submodule update --init --recursive
+
+#RUN cd /work/Software/ThirdParty/paho.mqtt.cpp    &&  \
+#    cmake -Bbuild -H. -DPAHO_WITH_MQTT_C=ON -DPAHO_BUILD_EXAMPLES=OFF && \
+#    cmake --build build/ --target install 
+
+#RUN ldconfig
+
+#   -----------------------------------------------------------------------
+#   Install MariaDB Clonnector
+#RUN git clone https://github.com/MariaDB-Corporation/mariadb-connector-cpp.git /work/Software/ThirdParty/mariadb-connector-cpp && \
+#    cd /work/Software/ThirdParty/mariadb-connector-cpp && \
+#    git submodule update --init --recursive
+
+#RUN mkdir /work/Software/ThirdParty/mariadb/build && \     
+#    cd /work/Software/ThirdParty/mariadb/build && \
+#    cmake ../mariadb-connector-cpp/ \
+#            -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+#            -DCONC_WITH_UNIT_TESTS=Off \
+#            -DCMAKE_INSTALL_PREFIX=/usr/local \
+#            -DWITH_SSL=OPENSSL && \
+#    cmake --build . --config RelWithDebInfo && \
+#    make install
+    #  && \
+#   create a symlink to the library in /usr/local/lib
+#RUN cd /usr/local/lib/ && \
+#    link mariadb/libmariadbcpp.so libmariadbcpp.so && \
+#    link mariadb/libmariadb.so.3 libmariadb.so.3
+
+#RUN ldconfig
+#   -----------------------------------------------------------------------
+#   Install Json library
+#RUN git clone https://github.com/nlohmann/json.git /work/Software/ThirdParty/nlohmann && \
+#    cd /work/Software/ThirdParty/nlohmann && \
+#    git submodule update --init --recursive
+

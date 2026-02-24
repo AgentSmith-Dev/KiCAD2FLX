@@ -1,0 +1,22 @@
+{
+  /// @brief  Docker Container für KiCAD2FLX
+  //  ------------------------------------------
+
+  /// A separate docker container for the KiCAD2FLX development environment
+  ///
+  /// @author AGS
+  /// @date 02/18/2026, AGS
+  "name": "KiCAD2FLX-dev",
+  "dockerComposeFile": "./../Docker/compose.yml",
+  "service": "kicad2flx-service",  //  name of the service in dockerComposeFile (compose.yml)
+  "workspaceFolder": "/work/",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.cpptools",
+        "ms-vscode.cmake-tools"
+      ]
+    }
+  }
+
+}

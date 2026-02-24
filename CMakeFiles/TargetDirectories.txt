@@ -1,0 +1,7 @@
+/work/CMakeFiles/KiCAD2FLX.dir
+/work/CMakeFiles/test.dir
+/work/CMakeFiles/edit_cache.dir
+/work/CMakeFiles/rebuild_cache.dir
+/work/test/CMakeFiles/test.dir
+/work/test/CMakeFiles/edit_cache.dir
+/work/test/CMakeFiles/rebuild_cache.dir

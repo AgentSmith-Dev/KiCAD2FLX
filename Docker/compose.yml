@@ -1,0 +1,22 @@
+services:
+  kicad2flx-service:
+#    image: ebmqttclient-dev:latest
+    build:
+      context: ..
+      dockerfile: ./Docker/DockerFile
+    volumes:
+      - /home/agentsmith/KiCAD2FLX:/work
+#      - type: bind
+#        source: /home/${USER}/KiCAD2FLX
+#        target: /work
+#      - type: volume
+#        source: ThirdParty
+#        target: /work/Software/ThirdParty
+##    working_dir: /work/EBMQTTClient
+#    extra_hosts:
+#      - host.docker.internal:host-gateway #required to properly connect do mariadb (on another container)
+    stdin_open: true
+    tty: true
+
+#volumes:
+#  ThirdParty:
