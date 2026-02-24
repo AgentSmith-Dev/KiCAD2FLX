@@ -17,14 +17,29 @@
 /// \brief  print commandline usage information
 ///
 /// \author ChatGPT
+///	\date	02/24/2026  ChatGPT Extended help text with parameter details
 ///	\date	02/18/2026  ChatGPT Start
 ///
 ///	\param	pszExeName	name of executable
 ///	\return	none
 //  ----------------------------------------------------------------------------------------------------
-static void vPrintUsage(const char* pszExeName)
+static void PrintUsage(const char* pszExeName)
 {
-    std::cout << "Usage: " << pszExeName << " <KiCAD.pos> <FLX.pos> [KiCADPackage2FLX.txt]\n";
+    std::cout << "Usage:\n";
+    std::cout << "  " << pszExeName << " <KiCAD.pos> <FLX.pos> [KiCADPackage2FLX.txt]\n";
+    std::cout << "\n";
+    std::cout << "Parameters:\n";
+    std::cout << "  <KiCAD.pos>              Input .pos file exported from KiCAD.\n";
+    std::cout << "                           Contains one component per line; comment lines start with '#'.\n";
+    std::cout << "  <FLX.pos>                Output .pos file for the Essemtec FLX machine.\n";
+    std::cout << "                           Package values are mapped/truncated via the mapping file.\n";
+    std::cout << "  [KiCADPackage2FLX.txt]   Optional package mapping file.\n";
+    std::cout << "                           If omitted, default is: KiCADPackage2FLX.txt\n";
+    std::cout << "\n";
+    std::cout << "Behavior:\n";
+    std::cout << "  - Unknown packages are kept unchanged.\n";
+    std::cout << "  - A warning is printed if an unknown package exceeds 32 characters.\n";
+    std::cout << "  - Conversion continues; program does not abort on unknown packages.\n";
     return;
 }
 
@@ -46,7 +61,7 @@ int main(int argc, char** argv)
 
     if ((argc != 3) && (argc != 4))
     {
-        vPrintUsage(argv[0]);
+        PrintUsage(argv[0]);
         bOk = false;
     }
 
@@ -87,47 +102,13 @@ int main(int argc, char** argv)
         int iWarnUnknownTooLong{0};
 
         int iLineNo{0};
+
+        // Structural programming: no dynamic_cast and no continue.
+        // Each line knows how to apply mapping (component lines will do the work).
         for (auto& rupLine : KiCadPosFile.rvecupGetLines())
         {
             iLineNo++;
-
-            if (!rupLine->bIsComment())
-            {
-                auto* pclComp = dynamic_cast<clPosComponentLine*>(rupLine.get());
-                if (pclComp != nullptr)
-                {
-                    if (pclComp->bWasParsedOk())
-                    {
-                        const std::string& rszPkg = pclComp->rszGetPackage();
-
-                        std::string szFlxPkg;
-                        if (PackageMapFile.bTryGetFlxPackage(rszPkg, &szFlxPkg))
-                        {
-                            pclComp->vSetPackage(szFlxPkg);
-
-                            if (szFlxPkg.size() > 32)
-                            {
-                                std::cout << "WARNING: FLX package still > 32 chars (line " << iLineNo
-                                          << "): " << szFlxPkg << "\n";
-                            }
-                        }
-                        else
-                        {
-                            if (rszPkg.size() > 32)
-                            {
-                                std::cout << "WARNING: Unknown KiCad package > 32 chars (kept as-is, line "
-                                          << iLineNo << "): " << rszPkg << "\n";
-                                iWarnUnknownTooLong++;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        std::cout << "WARNING: Could not parse line (kept as-is, line " << iLineNo
-                                  << "): " << pclComp->rszGetRawLine() << "\n";
-                    }
-                }
-            }
+            rupLine->ApplyPackageMapping(PackageMapFile, iLineNo, iWarnUnknownTooLong, std::cout);
         }
 
         if (!KiCadPosFile.bSaveToFile(szFlxPosFilename))

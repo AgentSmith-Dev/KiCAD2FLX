@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <ostream>
 
 //  ****************************************************************************************************
 ///  @brief   base class for a line in a .pos file
@@ -14,6 +15,12 @@ public:
 
     virtual bool bIsComment() const = 0;
     virtual std::string szToString() const = 0;
+    // Apply package mapping when this line represents a component.
+    // Default implementation does nothing (most lines will ignore).
+    virtual void ApplyPackageMapping(const class clPackageMapFile& /*rPackageMapFile*/, int /*iLineNo*/, int& /*riWarnUnknownTooLong*/, std::ostream& /*rOut*/)
+    {
+        return;
+    }
 
     clPosLine(const clPosLine&) = delete;
     clPosLine& operator=(const clPosLine&) = delete;
@@ -51,14 +58,16 @@ public:
     bool bIsComment() const override;
     std::string szToString() const override;
 
+    void ApplyPackageMapping(const class clPackageMapFile& rPackageMapFile, int iLineNo, int& riWarnUnknownTooLong, std::ostream& rOut) override;
+
     const std::string& rszGetPackage() const;
-    void vSetPackage(const std::string& rszPackage);
+    void SetPackage(const std::string& rszPackage);
 
     bool bWasParsedOk() const;
     const std::string& rszGetRawLine() const;
 
 private:
-    void vParse(const std::string& rszLine);
+    void Parse(const std::string& rszLine);
 
     bool m_bParsedOk{false};
 

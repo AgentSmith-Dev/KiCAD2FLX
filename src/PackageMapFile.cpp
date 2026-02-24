@@ -32,24 +32,17 @@ bool clPackageMapFile::bLoadFromFile(const std::string& rszFilename)
         std::string szLine;
         while (std::getline(ifs, szLine))
         {
-            if (szLine.empty())
+            if (!szLine.empty() && szLine[0] != '#')
             {
-                continue;
-            }
+                std::istringstream iss(szLine);
+                std::string szKiCad;
+                std::string szFlx;
 
-            if (szLine[0] == '#')
-            {
-                continue;
-            }
-
-            std::istringstream iss(szLine);
-            std::string szKiCad;
-            std::string szFlx;
-
-            iss >> szKiCad >> szFlx;
-            if (!iss.fail() && !szKiCad.empty() && !szFlx.empty())
-            {
-                m_umapszKiCadToFlx[szKiCad] = szFlx;
+                iss >> szKiCad >> szFlx;
+                if (!iss.fail() && !szKiCad.empty() && !szFlx.empty())
+                {
+                    m_umapszKiCadToFlx[szKiCad] = szFlx;
+                }
             }
         }
 

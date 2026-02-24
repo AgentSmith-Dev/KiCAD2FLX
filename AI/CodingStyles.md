@@ -1,3 +1,6 @@
+# Präambel
+(C) AgentSmith aka Christoph Faber, Dresden, 02/24/2026
+
 # Nomenklaturen
 
 Die Benennung von Variablen folgt dem Prinzip der ungarischen Notation von Charles Simonyi.
@@ -45,6 +48,9 @@ Beispiel	CString	CSAnMFCString
 
 CSW	Ein CStringW (Unicode-String aus der MFC)
 Beispiel	CStringW	CSAnMFCUnicodeString
+
+str Ein std::string aus der Standardlibary
+Beispiel	std::string	strMyText	
 
 ## Zusammengesetzte Daten und Container
 a	Ein Array
@@ -186,3 +192,12 @@ void CallMyFuncThatDoesNotModify (int&	riMyVar)
  	return;
 }
 ```
+
+## type casting
+
+### dynamic_cast<>()
+
+Das dynamische casten mittels dynamic_cast<>() sollte nur in absolut begründeten Ausnahmen erfolgen. In der Regel ist die Verwendung von dynamic_cast<>() ein Zeichen für einen Fehler in der Architektur.
+
+## Strukturierte Programmierung
+Die Verwendung von Schlüsselwörtern wie "continue" (verlässt eine Schleife) oder "goto" (springt an eine Stelle im Programm) verstößt gegen die Grundsätze der strukturierten Programmierung. Sie sind nicht zu verwenden.

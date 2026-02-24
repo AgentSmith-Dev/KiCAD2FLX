@@ -8,6 +8,8 @@
 
 #include "PosLine.h"
 
+#include "PackageMapFile.h"
+
 #include <sstream>
 
 //  ----------------------------------------------------------------------------------------------------
@@ -66,7 +68,7 @@ std::string clPosCommentLine::szToString() const
 //  ----------------------------------------------------------------------------------------------------
 clPosComponentLine::clPosComponentLine(const std::string& rszLine)
 {
-    vParse(rszLine);
+    Parse(rszLine);
     return;
 }
 
@@ -94,7 +96,7 @@ bool clPosComponentLine::bIsComment() const
 ///	\param	rszLine	line text
 ///	\return	none
 //  ----------------------------------------------------------------------------------------------------
-void clPosComponentLine::vParse(const std::string& rszLine)
+void clPosComponentLine::Parse(const std::string& rszLine)
 {
     m_szRawLine = rszLine;
     m_vecszExtraTokens.clear();
@@ -175,7 +177,7 @@ const std::string& clPosComponentLine::rszGetPackage() const
 ///	\param	rszPackage	new package
 ///	\return	none
 //  ----------------------------------------------------------------------------------------------------
-void clPosComponentLine::vSetPackage(const std::string& rszPackage)
+void clPosComponentLine::SetPackage(const std::string& rszPackage)
 {
     m_szPackage = rszPackage;
     return;
@@ -216,4 +218,49 @@ std::string clPosComponentLine::szToString() const
 
     std::string szRet{oss.str()};
     return szRet;
+}
+
+//  ----------------------------------------------------------------------------------------------------
+/// \brief  apply package mapping for component lines (no-op for comment lines)
+///
+/// \author ChatGPT
+///	\date	02/24/2026  ChatGPT Adjusted documentation block to coding style
+///
+///	\param	rPackageMapFile	package mapping dictionary
+///	\param	iLineNo	line number for warning output
+///	\param	riWarnUnknownTooLong	counter for unknown packages > 32 chars
+///	\param	rOut	output stream for warnings
+///	\return	void
+//  ----------------------------------------------------------------------------------------------------
+void clPosComponentLine::ApplyPackageMapping(const clPackageMapFile& rPackageMapFile, int iLineNo, int& riWarnUnknownTooLong, std::ostream& rOut)
+{
+    if (bWasParsedOk())
+    {
+        const std::string& rszPkg = rszGetPackage();
+
+        std::string szFlxPkg;
+        if (rPackageMapFile.bTryGetFlxPackage(rszPkg, &szFlxPkg))
+        {
+            SetPackage(szFlxPkg);
+
+            if (szFlxPkg.size() > 32)
+            {
+                rOut << "WARNING: FLX package still > 32 chars (line " << iLineNo << "): " << szFlxPkg << "\n";
+            }
+        }
+        else
+        {
+            if (rszPkg.size() > 32)
+            {
+                rOut << "WARNING: Unknown KiCad package > 32 chars (kept as-is, line " << iLineNo << "): " << rszPkg << "\n";
+                riWarnUnknownTooLong++;
+            }
+        }
+    }
+    else
+    {
+        rOut << "WARNING: Could not parse line (kept as-is, line " << iLineNo << "): " << rszGetRawLine() << "\n";
+    }
+
+    return;
 }

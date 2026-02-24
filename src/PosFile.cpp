@@ -85,8 +85,7 @@ bool clPosFile::bSaveToFile(const std::string& rszFilename) const
 //  ----------------------------------------------------------------------------------------------------
 std::vector<std::unique_ptr<clPosLine>>& clPosFile::rvecupGetLines()
 {
-    std::vector<std::unique_ptr<clPosLine>>& rvecupRet{m_vecupLines};
-    return rvecupRet;
+    return m_vecupLines;
 }
 
 //  ----------------------------------------------------------------------------------------------------
@@ -100,6 +99,5 @@ std::vector<std::unique_ptr<clPosLine>>& clPosFile::rvecupGetLines()
 //  ----------------------------------------------------------------------------------------------------
 const std::vector<std::unique_ptr<clPosLine>>& clPosFile::rvecupGetLines() const
 {
-    const std::vector<std::unique_ptr<clPosLine>>& rvecupRet{m_vecupLines};
-    return rvecupRet;
+    return m_vecupLines;
 }
